@@ -39,14 +39,14 @@ ENV PYTHONPATH=$PYTHONPATH:$SPARK_HOME/python
 
 RUN apt-get update && apt-get install -y emacs
 
-COPY ./ ${HOME}/sedona
-
 RUN apt-get update && apt-get install -y openjdk-8-jdk
 
-RUN cd ${HOME}/sedona \
-  && mvn clean install -Dspark=3.4 -DskipTests 
+COPY ./ ${HOME}/sedona
 
-RUN cd ${HOME}/sedona/examples/lidar-hd \
-  && mvn clean package
+# RUN cd ${HOME}/sedona \
+#   && mvn clean install -Dspark=3.4 -DskipTests 
+
+# RUN cd ${HOME}/sedona/examples/lidar-hd \
+#   && mvn clean package
 
 

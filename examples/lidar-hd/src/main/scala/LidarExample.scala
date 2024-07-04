@@ -25,9 +25,9 @@ import org.apache.sedona.viz.core.{ImageGenerator, ImageSerializableWrapper, Ras
 import org.apache.sedona.viz.extension.visualizationEffect.{ChoroplethMap, HeatMap, ScatterPlot}
 import org.apache.sedona.viz.utils.ImageType
 import org.apache.sedona.core.spatialRDD.{PolygonRDD, RectangleRDD}
+import org.apache.sedona.core.spatialRDD.{PolygonRDD, RectangleRDD}
 import org.apache.sedona.sql.utils.Adapter
 import org.apache.sedona.core.spatialOperator.{JoinQuery, KNNQuery, RangeQuery}
-import org.apache.sedona.core.spatialRDD.{Point3DRDD}
 import org.apache.spark.sql.SparkSession
 
 import org.locationtech.jts.geom.Geometry
@@ -48,7 +48,7 @@ object LidarExample {
     val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
 
     LidarDf.createOrReplaceTempView("Lidardf")
-    var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_Point(Lidardf.X,Lidardf.Y) as point from Lidardf")
+    var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_PointZ(Lidardf.X,Lidardf.Y,Lidardf.Z) as point from Lidardf")
       , "point")
 
     LidarRDD.analyze()
