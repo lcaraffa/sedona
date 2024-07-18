@@ -41,7 +41,6 @@ RUN apt-get update && apt-get install -y emacs
 
 RUN apt-get update && apt-get install -y openjdk-8-jdk
 
-COPY ./ ${HOME}/sedona
 
 # RUN cd ${HOME}/sedona \
 #   && mvn clean install -Dspark=3.4 -DskipTests 

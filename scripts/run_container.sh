@@ -1,1 +1,1 @@
-docker run -i -t  sedona:test /bin/bash
+docker run -i -t -v ${PWD}:/data/:z  sedona:test /bin/bash

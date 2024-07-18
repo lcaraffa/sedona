@@ -60,15 +60,30 @@ object LidarExample {
 
     val env = LidarRDD.boundaryEnvelope
     val geometryFactory = new GeometryFactory()
-    val pointObject = geometryFactory.createPoint(new Coordinate(-84.01, 34.01))
-    val K = 20
-    val result = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject, K, false)
-    print(result)
+    val pointObject1 = geometryFactory.createPoint(new Coordinate(271, 231,-100))
+    val pointObject2 = geometryFactory.createPoint(new Coordinate(271, 231,100))
+    val K = 50
+    val result1 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject1, K, false)
+    val result2 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject2, K, false)
+    print(result1 == result2)
+
     val imageResolutionX = 1000
     val imageResolutionY = 1000
     val frontImage = new ScatterPlot(imageResolutionX, imageResolutionY, LidarRDD.boundary, true)
+
     frontImage.CustomizeColor(0, 0, 0, 255, Color.GREEN, true)
     frontImage.Visualize(sedona.sparkContext, LidarRDD)
+
+    //  frontImage.CustomizeColor(0, 0, 0, 255, null, false)
+    //  val colorizeFunc = new Colorize[LidarRDD](LidarRDD) {
+    //    override def fillColor(point: LidarRDD): Color = {
+    //    val zValue = point.getUserData.asInstanceOf[Double] // Assumes Z value is stored in UserData
+    //        val color = Color.getHSBColor((zValue / 255).toFloat, 1.0f, 1.0f) // Example mapping
+    //  	      new Color(color.getRed, color.getGreen, color.getBlue, 255)
+    //      }
+    //   }
+    // x  frontImage.setColorize(colorizeFunc)
+
 
     val backImage = new HeatMap(imageResolutionX, imageResolutionY, env, true, 1)
     backImage.Visualize(sedona.sparkContext, LidarRDD)

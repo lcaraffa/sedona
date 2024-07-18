@@ -21,6 +21,7 @@ package org.apache.sedona.core.knnJudgement;
 import java.io.Serializable;
 import java.util.Comparator;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 // TODO: Auto-generated Javadoc
 
@@ -48,8 +49,16 @@ public class GeometryDistanceComparator<T extends Geometry> implements Comparato
    * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
    */
   public int compare(T p1, T p2) {
-    double distance1 = (p1).distance(queryCenter);
-    double distance2 = (p2).distance(queryCenter);
+    double distance1 = 0;
+    double distance2 = 0;
+    if (p1 instanceof Point) {
+      distance1 = ((Point) p1).getCoordinate().distance3D(((Point) queryCenter).getCoordinate());
+      distance2 = ((Point) p2).getCoordinate().distance3D(((Point) queryCenter).getCoordinate());
+    } else {
+      distance1 = (p1).distance(queryCenter);
+      distance2 = (p2).distance(queryCenter);
+    }
+
     if (this.normalOrder) {
       if (distance1 > distance2) {
         return 1;
