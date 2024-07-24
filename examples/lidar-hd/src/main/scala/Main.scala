@@ -18,7 +18,7 @@
  */
 
 
-import LidarExample._
+import LidarExampleExec._
 import org.apache.log4j.{Level, Logger}
 import org.apache.sedona.spark.SedonaContext
 import org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator
@@ -33,6 +33,7 @@ object Main extends App {
     .config("spark.kryo.registrator", classOf[SedonaVizKryoRegistrator].getName)
     .getOrCreate()
   val sedona = SedonaContext.create(config)
+  sedona.sparkContext.setLogLevel("WARN")
 
   SedonaVizRegistrator.registerAll(sedona)
 
