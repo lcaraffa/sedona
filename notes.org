@@ -10,7 +10,12 @@
 #+END_SRC
 ** Run example convert laz to parquet
 #+BEGIN_SRC sh
+  export SBT_OPTS="-Xmx4G -XX:+UseG1GC"
   cd /root/spark-las-tests && sbt run
+#+END_SRC
+#+BEGIN_SRC sh
+  export SBT_OPTS="-Xmx4G -XX:+UseG1GC"
+  cd /root/spark-las-tests && sbt console
 #+END_SRC
 ** Run example Sedona
 #+BEGIN_SRC sh
