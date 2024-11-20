@@ -1,13 +1,20 @@
 * build
-DOCKER_BUILDKIT=0 docker build --tag sedona3d -f Dockerfile .
+#+BEGIN_SRC sh
+  DOCKER_BUILDKIT=0 docker build --tag sedona3d -f Dockerfile .
+#+END_SRC
 * run
 ** Run container
-SEDONA_SRC=${PWD}
-docker run --gpus all -u 0 --env SEDONA_SRC=${SEDONA_SRC} -v ${SEDONA_SRC}:${SEDONA_SRC}  --rm -it  sedona3d
+#+BEGIN_SRC sh
+  SEDONA_SRC=${PWD}
+  docker run --gpus all -u 0 --env SEDONA_SRC=${SEDONA_SRC} -v ${SEDONA_SRC}:${SEDONA_SRC}  --rm -it  sedona3d
+#+END_SRC
 ** Run example spark-lass
-cd /root/spark-las-tests && sbt run
+#+BEGIN_SRC sh
+  cd /root/spark-las-tests && sbt run
+#+END_SRC
 ** Run example Sedona
-cd ${SEDONA_SRC} && mvn clean package
-cd ${SEDONA_SRC}/examples/lidar-hd/ && mvn clean package
-source run_example.sh
-
+#+BEGIN_SRC sh
+  cd ${SEDONA_SRC} && mvn clean package
+  cd ${SEDONA_SRC}/examples/lidar-hd/ && mvn clean package
+  source run_example.sh
+#+END_SRC
