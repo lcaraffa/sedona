@@ -12,6 +12,9 @@
 #+BEGIN_SRC sh
   cd /root/spark-las-tests && sbt run
 #+END_SRC
+#+BEGIN_SRC sh
+  cd /root/spark-las-tests && sbt console
+#+END_SRC
 ** Run example Sedona
 #+BEGIN_SRC sh
   cd ${SEDONA_SRC} && mvn clean package
