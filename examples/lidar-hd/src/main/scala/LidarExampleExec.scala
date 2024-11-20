@@ -79,7 +79,7 @@ object LidarExampleExec {
     println("Example 2: Far-away centers")
     println(result3 == result4)
 
-    /*
+    
     val imageResolutionX = 1000
     val imageResolutionY = 1000
     val frontImage = new ScatterPlot(imageResolutionX, imageResolutionY, LidarRDD.boundary, true)
@@ -105,7 +105,7 @@ object LidarExampleExec {
 
     val imageGenerator = new ImageGenerator
     imageGenerator.SaveRasterImageAsLocalFile(overlayOperator.backRasterImage,System.getProperty("user.dir"), ImageType.PNG)
-    */
+    
     true
   }
 }

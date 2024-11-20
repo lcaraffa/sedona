@@ -21,10 +21,10 @@ RUN curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E4
 RUN apt-get update && apt-get install sbt
 
 # install spark
-RUN wget "https://dlcdn.apache.org/spark/spark-3.4.3/spark-3.4.3-bin-hadoop3.tgz" && tar -xf spark-3.4.3-bin-hadoop3.tgz
+RUN wget "https://dlcdn.apache.org/spark/spark-3.5.3/spark-3.5.3-bin-hadoop3.tgz" && tar -xf spark-3.5.3-bin-hadoop3.tgz 
 
 # install jdk
-RUN wget "https://download.oracle.com/java/22/latest/jdk-22_linux-aarch64_bin.tar.gz" && tar -xf jdk-22_linux-aarch64_bin.tar.gz
+RUN wget "https://download.oracle.com/java/22/archive/jdk-22_linux-aarch64_bin.tar.gz" && tar -xf jdk-22_linux-aarch64_bin.tar.gz
 
 # install maven
 RUN wget "https://dlcdn.apache.org/maven/maven-3/3.9.8/binaries/apache-maven-3.9.8-bin.tar.gz" && tar -xf apache-maven-3.9.8-bin.tar.gz \
@@ -33,7 +33,7 @@ RUN wget "https://dlcdn.apache.org/maven/maven-3/3.9.8/binaries/apache-maven-3.9
 # set up environments
 ENV MAVEN_HOME=${HOME}/apache-maven-3.9.8-bin
 
-ENV SPARK_HOME=${HOME}/spark-3.4.3-bin-hadoop3
+ENV SPARK_HOME=${HOME}/spark-3.5.3-bin-hadoop3
 ENV PATH=$PATH:$SPARK_HOME
 ENV PYTHONPATH=$PYTHONPATH:$SPARK_HOME/python
 
