@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export SBT_OPTS="-Xmx4G -XX:+UseG1GC"
 $SPARK_HOME/bin/spark-submit \
 	--master local[*] \
 	--jars ../../spark/common/target/sedona-spark-common-3.0_2.12-1.6.1-SNAPSHOT.jar,../../common/target/sedona-common-1.6.1-SNAPSHOT.jar,../../spark-shaded/target/sedona-spark-shaded-3.0_2.12-1.6.1-SNAPSHOT.jar \

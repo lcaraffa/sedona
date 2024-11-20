@@ -24,89 +24,111 @@
 ** Run with shell
 
 #+BEGIN_SRC java
-  :paste
-  import org.apache.log4j.{Level, Logger}
-  import org.apache.sedona.spark.SedonaContext
-  import org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator
-  import org.apache.sedona.viz.sql.utils.SedonaVizRegistrator
-  import org.apache.sedona.core.enums.{GridType, IndexType}
-  import org.apache.sedona.viz.core.{ImageGenerator, ImageSerializableWrapper, RasterOverlayOperator}
-  import org.apache.sedona.viz.extension.visualizationEffect.{ChoroplethMap, HeatMap, ScatterPlot}
-  import org.apache.sedona.viz.utils.ImageType
-  import org.apache.sedona.core.spatialRDD.{PolygonRDD, RectangleRDD}
-  import org.apache.sedona.core.spatialRDD.{PolygonRDD, RectangleRDD}
-  import org.apache.sedona.sql.utils.Adapter
-  import org.apache.sedona.core.spatialOperator.{JoinQuery, KNNQuery, RangeQuery}
-  import org.apache.spark.sql.SparkSession
+   :paste
+   import org.apache.log4j.{Level, Logger}
+   import org.apache.sedona.spark.SedonaContext
+   import org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator
+   import org.apache.sedona.viz.sql.utils.SedonaVizRegistrator
+   import org.apache.sedona.core.enums.{GridType, IndexType}
+   import org.apache.sedona.viz.core.{ImageGenerator, ImageSerializableWrapper, RasterOverlayOperator}
+   import org.apache.sedona.viz.extension.visualizationEffect.{ChoroplethMap, HeatMap, ScatterPlot}
+   import org.apache.sedona.viz.utils.ImageType
+   import org.apache.sedona.core.spatialRDD.{PolygonRDD, RectangleRDD}
+   import org.apache.sedona.core.spatialRDD.{PolygonRDD, RectangleRDD}
+   import org.apache.sedona.sql.utils.Adapter
+   import org.apache.sedona.core.spatialOperator.{JoinQuery, KNNQuery, RangeQuery}
+   import org.apache.spark.sql.SparkSession
 
-  import org.locationtech.jts.geom.Geometry
-  import org.locationtech.jts.geom.Envelope
-  import org.locationtech.jts.geom.GeometryFactory;
-  import org.locationtech.jts.geom.Coordinate;
+   import org.locationtech.jts.geom.Geometry
+   import org.locationtech.jts.geom.Envelope
+   import org.locationtech.jts.geom.GeometryFactory;
+   import org.locationtech.jts.geom.Coordinate;
 
-  import java.awt.Color
+   import java.awt.Color
 
-  Logger.getRootLogger().setLevel(Level.WARN)
+   Logger.getRootLogger().setLevel(Level.WARN)
 
-  val config = SedonaContext.builder().appName("SedonaSQL-demo")
-  .master("local[*]") // Please comment out this when use it on a cluster
+   // val config = SedonaContext.builder().appName("SedonaSQL-demo")
+   // .master("local[*]") // Please comment out this when use it on a cluster
+   // .config("spark.kryo.registrator", classOf[SedonaVizKryoRegistrator].getName)
+   // .getOrCreate()
+
+  val config = SedonaContext.builder().appName("SedonaSQL-demo")                                                                                                                                                  
+  .master("local[*]") // Please comment out this when use it on a cluster                                                                                                                                         
   .config("spark.kryo.registrator", classOf[SedonaVizKryoRegistrator].getName)
-  .getOrCreate()
-  val sedona = SedonaContext.create(config)
-  sedona.sparkContext.setLogLevel("WARN")
-
-  SedonaVizRegistrator.registerAll(sedona)
-
-  val resourceFolder = System.getProperty("user.dir")+"/src/test/resources/"
-
-  val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
-
-  LidarDf.createOrReplaceTempView("Lidardf")
-  var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_PointZ(Lidardf.X,Lidardf.Y,Lidardf.Z) as point from Lidardf")
-  , "point")
-
-  LidarRDD.analyze()
-  LidarRDD.spatialPartitioning(GridType.KDBTREE)
-  LidarRDD.buildIndex(
-  IndexType.RTREE,
-  true
-  )
-
-  val env = LidarRDD.boundaryEnvelope
-  val geometryFactory = new GeometryFactory()
-
-  val K = 50
-
-  // Example 1: very close points
-  val pointObject1 = geometryFactory.createPoint(new Coordinate(271, 231,-0.002))
-  val pointObject2 = geometryFactory.createPoint(new Coordinate(271, 231,0.002))
-  val result1 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject1, K, false)
-  val result2 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject2, K, false)
-  println("Example 1: Very close centers")
-  println(result1 == result2)
-
-  // Example 2: separate points
-  val pointObject3 = geometryFactory.createPoint(new Coordinate(271, 231,-100))
-  val pointObject4 = geometryFactory.createPoint(new Coordinate(271, 231,100))
-  val result3 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject3, K, false)
-  val result4 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject4, K, false)
-  println("Example 2: Far-away centers")
-  println(result3 == result4)
+  .config("spark.rdd.compress", "true")
+  .config("spark.eventLog.enabled", "true")
+  .config("spark.memory.fraction", "0.2")
+  .config("spark.driver.allowMultipleContexts", "true")
+  .config("spark.memory.storageFraction", "0.8")
+  .config("spark.worker.cleanup.enabled", "true")
+  .config("spark.worker.cleanup.interval", "350") // Fix typo "interva" to "interval"
+  .config("spark.memory.offHeap.enabled", "true")
+  .config("spark.memory.offHeap.size", "10g")
+  .config("spark.network.timeout", "10000000")
+  .config("spark.executor.memory", "10g") // Replace SPARK_EXECUTOR_MEMORY with actual value
+  .config("spark.driver.memory", "10g") // Replace SPARK_DRIVER_MEMORY with actual value       
+    .getOrCreate()        
 
 
-  val imageResolutionX = 1000
-  val imageResolutionY = 1000
-  val frontImage = new ScatterPlot(imageResolutionX, imageResolutionY, LidarRDD.boundary, true)
 
-  frontImage.CustomizeColor(0, 0, 0, 255, Color.GREEN, true)
-  frontImage.Visualize(sedona.sparkContext, LidarRDD)
 
-  val backImage = new HeatMap(imageResolutionX, imageResolutionY, env, true, 1)
-  backImage.Visualize(sedona.sparkContext, LidarRDD)
-  val overlayOperator = new RasterOverlayOperator(backImage.rasterImage)
-  overlayOperator.JoinImage(frontImage.rasterImage)
+   // v
+       al sedona = SedonaContext.create(config)
+   sedona.sparkContext.setLogLevel("WARN")
 
-  val imageGenerator = new ImageGenerator
-  imageGenerator.SaveRasterImageAsLocalFile(overlayOperator.backRasterImage,System.getProperty("user.dir"), ImageType.PNG)
+   SedonaVizRegistrator.registerAll(sedona)
+
+   val resourceFolder = System.getProperty("user.dir")+"/src/test/resources/"
+
+   val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
+
+   LidarDf.createOrReplaceTempView("Lidardf")
+   var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_PointZ(Lidardf.X,Lidardf.Y,Lidardf.Z) as point from Lidardf")
+   , "point")
+
+   LidarRDD.analyze()
+   LidarRDD.spatialPartitioning(GridType.KDBTREE)
+   LidarRDD.buildIndex(
+   IndexType.RTREE,
+   true
+   )
+
+   val env = LidarRDD.boundaryEnvelope
+   val geometryFactory = new GeometryFactory()
+
+   val K = 50
+
+   // Example 1: very close points
+   val pointObject1 = geometryFactory.createPoint(new Coordinate(271, 231,-0.002))
+   val pointObject2 = geometryFactory.createPoint(new Coordinate(271, 231,0.002))
+   val result1 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject1, K, false)
+   val result2 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject2, K, false)
+   println("Example 1: Very close centers")
+   println(result1 == result2)
+
+   // Example 2: separate points
+   val pointObject3 = geometryFactory.createPoint(new Coordinate(271, 231,-100))
+   val pointObject4 = geometryFactory.createPoint(new Coordinate(271, 231,100))
+   val result3 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject3, K, false)
+   val result4 = KNNQuery.SpatialKnnQuery(LidarRDD, pointObject4, K, false)
+   println("Example 2: Far-away centers")
+   println(result3 == result4)
+
+
+   val imageResolutionX = 1000
+   val imageResolutionY = 1000
+   val frontImage = new ScatterPlot(imageResolutionX, imageResolutionY, LidarRDD.boundary, true)
+
+   frontImage.CustomizeColor(0, 0, 0, 255, Color.GREEN, true)
+   frontImage.Visualize(sedona.sparkContext, LidarRDD)
+
+   val backImage = new HeatMap(imageResolutionX, imageResolutionY, env, true, 1)
+   backImage.Visualize(sedona.sparkContext, LidarRDD)
+   val overlayOperator = new RasterOverlayOperator(backImage.rasterImage)
+   overlayOperator.JoinImage(frontImage.rasterImage)
+
+   val imageGenerator = new ImageGenerator
+   imageGenerator.SaveRasterImageAsLocalFile(overlayOperator.backRasterImage,System.getProperty("user.dir"), ImageType.PNG)
 
 #+END_SRC
