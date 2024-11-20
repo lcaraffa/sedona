@@ -8,7 +8,7 @@
   SEDONA_SRC=${PWD}
   docker run --gpus all -u 0 --env SEDONA_SRC=${SEDONA_SRC} -v ${SEDONA_SRC}:${SEDONA_SRC}  --rm -it  sedona3d
 #+END_SRC
-** Run example spark-lass
+** Run example convert laz to parquet
 #+BEGIN_SRC sh
   cd /root/spark-las-tests && sbt run
 #+END_SRC
