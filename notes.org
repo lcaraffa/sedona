@@ -78,7 +78,7 @@
 
 
 
-   // val sedona = SedonaContext.create(config)
+   val sedona = SedonaContext.create(config)
    sedona.sparkContext.setLogLevel("WARN")
 
    SedonaVizRegistrator.registerAll(sedona)
