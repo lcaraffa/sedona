@@ -41,6 +41,10 @@ RUN apt-get update && apt-get install -y emacs
 
 RUN apt-get update && apt-get install -y openjdk-8-jdk
 
+RUN cd ${HOME} \
+    && git clone -b dev https://github.com/lcaraffa/spark-las-tests.git \
+    && sbt compile &&  sbt package
+    
 
 # RUN cd ${HOME}/sedona \
 #   && mvn clean install -Dspark=3.4 -DskipTests 

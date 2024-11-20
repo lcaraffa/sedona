@@ -87,17 +87,6 @@ object LidarExampleExec {
     frontImage.CustomizeColor(0, 0, 0, 255, Color.GREEN, true)
     frontImage.Visualize(sedona.sparkContext, LidarRDD)
 
-    //  frontImage.CustomizeColor(0, 0, 0, 255, null, false)
-    //  val colorizeFunc = new Colorize[LidarRDD](LidarRDD) {
-    //    override def fillColor(point: LidarRDD): Color = {
-    //    val zValue = point.getUserData.asInstanceOf[Double] // Assumes Z value is stored in UserData
-    //        val color = Color.getHSBColor((zValue / 255).toFloat, 1.0f, 1.0f) // Example mapping
-    //  	      new Color(color.getRed, color.getGreen, color.getBlue, 255)
-    //      }
-    //   }
-    // x  frontImage.setColorize(colorizeFunc)
-
-
     val backImage = new HeatMap(imageResolutionX, imageResolutionY, env, true, 1)
     backImage.Visualize(sedona.sparkContext, LidarRDD)
     val overlayOperator = new RasterOverlayOperator(backImage.rasterImage)
