@@ -19,7 +19,7 @@
 #+END_SRC
 ** Run example Sedona
 #+BEGIN_SRC sh
-  cd ${SEDONA_SRC} && mvn clean package -DskipTests 
+  cd ${SEDONA_SRC} && mvn clean package -DskipTests -Dgeotools
   cd ${SEDONA_SRC}/examples/lidar-hd/ && mvn clean package
   source run_example.sh
 #+END_SRC
