@@ -17,7 +17,6 @@
 import Main.resourceFolder
 import org.apache.log4j.{Level, Logger}
 import org.apache.sedona.spark.SedonaContext
-import org.apache.sedona.spark.SedonaContext
 import org.apache.sedona.viz.core.Serde.SedonaVizKryoRegistrator
 import org.apache.sedona.viz.sql.utils.SedonaVizRegistrator
 import org.apache.sedona.core.enums.{GridType, IndexType}
@@ -46,7 +45,7 @@ object LidarExampleExec {
   def vizLidar(sedona: SparkSession): Boolean = {
 
     val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
-
+    //val LidarDf = sedona.read.parquet("/mnt/data1/datas/LidarHD/grenoble_urbain/grenoble.parquet")
     LidarDf.createOrReplaceTempView("Lidardf")
     var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_PointZ(Lidardf.X,Lidardf.Y,Lidardf.Z) as point from Lidardf")
       , "point")

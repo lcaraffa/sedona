@@ -30,9 +30,12 @@ object Main extends App {
 
   val config = SedonaContext.builder().appName("SedonaSQL-demo")
     .master("local[*]") // Please comment out this when use it on a cluster
+    .config("spark.sql.files.maxPartitionBytes","5342177")
     .config("spark.kryo.registrator", classOf[SedonaVizKryoRegistrator].getName)
     .getOrCreate()
   val sedona = SedonaContext.create(config)
+
+  sedona.sparkContext.getConf.getAll.map(println(_))
   sedona.sparkContext.setLogLevel("WARN")
 
   SedonaVizRegistrator.registerAll(sedona)
