@@ -17,6 +17,47 @@
   export SBT_OPTS="-Xmx4G -XX:+UseG1GC"
   cd /root/spark-las-tests && sbt console
 #+END_SRC
+
+#+BEGIN_SRC java
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+
+val spark = SparkSession
+  .builder()
+  .master("local[*]")
+  .appName("spark-las")
+  .config("spark.rdd.compress", "true")
+  .config("spark.cores.max","20")
+  .config("spark.eventLog.enabled", "true")
+  .config("spark.memory.fraction", "0.2")
+  .config("spark.driver.allowMultipleContexts", "true")
+  .config("spark.memory.storageFraction", "0.8")
+  .config("spark.worker.cleanup.enabled", "true")
+  .config("spark.worker.cleanup.interval", "350") // Fix typo "interva" to "interval"
+  .config("spark.memory.offHeap.enabled", "true")
+  .config("spark.memory.offHeap.size", "10g")
+  .config("spark.network.timeout", "10000000")
+  .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+  .config("spark.executor.memory", "40g") // Replace SPARK_EXECUTOR_MEMORY with actual value
+  .config("spark.driver.memory", "40g") // Replace SPARK_DRIVER_MEMORY with actual value
+  .getOrCreate()
+
+val las_dataframe = spark.read
+    // The option "las_reader" choose the lib for read. Two
+    // values allowed "las4j" and "pdal" (slow)
+    // See LAS.LASOptions for more info
+    .format("IO.LAS.LAS")
+    .option("las_reader", "las4j")
+    .load(
+      "/mnt/data1/datas/LidarHD/aiguille/LHD_FXX_1001_6539_PTS_C_LAMB93_IGN69_v2.las"
+    )
+
+las_dataframe.write
+    .parquet(
+      "/mnt/data1/datas/LidarHD/aiguille/aiguille_v2.parquet"
+    )
+
+#+END_SRC
 ** Run example Sedona
 #+BEGIN_SRC sh
   cd ${SEDONA_SRC} && mvn clean package -DskipTests -Dgeotools
