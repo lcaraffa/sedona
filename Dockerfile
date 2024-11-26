@@ -42,10 +42,15 @@ RUN apt-get update && apt-get install -y emacs
 RUN apt-get update && apt-get install -y openjdk-8-jdk
 
 RUN cd ${HOME} \
-    && git clone -b dev https://github.com/lcaraffa/spark-las-tests.git \
-    && sbt compile &&  sbt package
-    
+    && git clone -b dev https://github.com/lcaraffa/spark-las-tests.git 
+RUN cd ${HOME}/spark-las-tests sbt compile &&  sbt package
 
+RUN echo "PS1='\u@\h:\w\$ '" >> ${HOME}/.bashrc
+RUN echo 'export SBT_OPTS="-Xmx4G -XX:+UseG1GC"' >> ${HOME}/.bashrc
+RUN mkdir -p /tmp/spark-events
+
+
+COPY ./spark-env.sh.conf ${SPARK_HOME}/conf/spark-env.sh
 # RUN cd ${HOME}/sedona \
 #   && mvn clean install -Dspark=3.4 -DskipTests 
 

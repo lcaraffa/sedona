@@ -116,7 +116,7 @@ object RddExample {
     tripRDD.indexedRDD = tripRDD.indexedRDD.cache()
 
     // Parameter settings. Check the definition of Ripley's K function.
-    val area = tripRDD.boundaryEnvelope.getArea
+    val area = tripRD.DboundaryEnvelope.getArea
     val maxDistance = 0.01*Math.max(tripRDD.boundaryEnvelope.getHeight,tripRDD.boundaryEnvelope.getWidth)
     val iterationTimes = 10
     val distanceIncrement = maxDistance/iterationTimes

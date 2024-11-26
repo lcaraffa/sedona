@@ -1,10 +1,4 @@
 #!/bin/bash
-echo "export SPARK_EXECUTOR_MEMORY=50G" >> ${SPARK_HOME}/conf/spark-env.sh
-echo "export SPARK_DRIVER_MEMORY=50G" >> ${SPARK_HOME}/conf/spark-env.sh
-echo "export SPARK_WORKER_CORES=16" >> ${SPARK_HOME}/conf/spark-env.sh
-echo "export SPARK_WORKER_MEMORY=50G" >> ${SPARK_HOME}/conf/spark-env.sh
-
-
 $SPARK_HOME/bin/spark-shell \
         --master local[*] \
         --jars ../../spark/common/target/sedona-spark-common-3.0_2.12-1.6.1-SNAPSHOT.jar,../../common/target/sedona-common-1.6.1-SNAPSHOT.jar,../../spark-shaded/target/sedona-spark-shaded-3.0_2.12-1.6.1-SNAPSHOT.jar,target/lidar-sedona-spark-example-1.6.0.jar \
