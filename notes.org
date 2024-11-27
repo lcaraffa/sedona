@@ -53,7 +53,7 @@ val spark = SparkSession
 
 
 val input_las_path = "/mnt/data1/datas/LidarHD/aiguille/LHD_FXX_1001_6539_PTS_C_LAMB93_IGN69_v2.las"
-val output_parquet_path = "/mnt/data1/datas/LidarHD/aiguille/aiguille.parquet"
+val output_parquet_path = "/mnt/data1/datas/LidarHD/aiguille/aiguille_v2.parquet"
 val las_dataframe = spark.read
   .format("IO.LAS.LAS")
   .option("las_reader", "las4j")
@@ -64,19 +64,22 @@ las_dataframe.write
   
 #+END_SRC
 ** Processing with Sedona
-*** Spark-submit
+*** Compile
 #+BEGIN_SRC sh
   cd ${SEDONA_SRC} && mvn clean package -DskipTests -Dgeotools
   cd ${SEDONA_SRC}/examples/lidar-hd/ && mvn clean package
-  source run_example.sh
+
+#+END_SRC
+*** run Spark-submit
+#+BEGIN_SRC sh
+  cd ${SEDONA_SRC} && source run_example.sh
 #+END_SRC
 
 
-*** Spark-shell
+*** run Spark-shell
 
-#+BEGIN_SRC sh  
-  cd ${SEDONA_SRC}/examples/lidar-hd/ && mvn clean package
-  source run_shell.sh
+#+BEGIN_SRC sh
+  cd ${SEDONA_SRC} && source run_shell.sh
 #+END_SRC
 
 #+BEGIN_SRC java
@@ -133,7 +136,7 @@ las_dataframe.write
 
   val resourceFolder = System.getProperty("user.dir")+"/src/test/resources/"
 
-  val LidarDf = sedona.read.parquet("/mnt/data1/datas/LidarHD/grenoble_urbain/grenoble.parquet")
+  val LidarDf = sedona.read.parquet("/mnt/data1/datas/LidarHD/aiguille/aiguille.parquet")
   //val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
   LidarDf.createOrReplaceTempView("Lidardf")
   var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_PointZ(Lidardf.X,Lidardf.Y,Lidardf.Z) as point from Lidardf")
@@ -151,7 +154,7 @@ las_dataframe.write
 
   val K = 50
 
-  if(false){
+  if(true){
     // Example 1: very close points
     val px = (env.getMaxX + env.getMinX)/2
     val py = (env.getMaxY + env.getMinY)/2
@@ -171,8 +174,8 @@ las_dataframe.write
     println(result3 == result4)
   }
 
-  val imageResolutionX = 1000
-  val imageResolutionY = 1000
+  val imageResolutionX = 5000
+  val imageResolutionY = 5000
   val frontImage = new ScatterPlot(imageResolutionX, imageResolutionY, LidarRDD.boundary, true)
 
   frontImage.CustomizeColor(0, 0, 0, 255, Color.GREEN, true)
