@@ -72,14 +72,14 @@ las_dataframe.write
 #+END_SRC
 *** run Spark-submit
 #+BEGIN_SRC sh
-  cd ${SEDONA_SRC} && source run_example.sh
+  cd ${SEDONA_SRC}/examples/lidar-hd/ && source run_example.sh
 #+END_SRC
 
 
 *** run Spark-shell
 
 #+BEGIN_SRC sh
-  cd ${SEDONA_SRC} && source run_shell.sh
+  cd ${SEDONA_SRC}/examples/lidar-hd/ && source run_shell.sh
 #+END_SRC
 
 #+BEGIN_SRC java
@@ -136,8 +136,8 @@ las_dataframe.write
 
   val resourceFolder = System.getProperty("user.dir")+"/src/test/resources/"
 
-  val LidarDf = sedona.read.parquet("/mnt/data1/datas/LidarHD/aiguille/aiguille.parquet")
-  //val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
+  //val LidarDf = sedona.read.parquet("/mnt/data1/datas/LidarHD/aiguille/aiguille.parquet")
+  val LidarDf = sedona.read.parquet(resourceFolder + "LidarHD.parquet")
   LidarDf.createOrReplaceTempView("Lidardf")
   var LidarRDD = Adapter.toSpatialRdd(sedona.sql("select ST_PointZ(Lidardf.X,Lidardf.Y,Lidardf.Z) as point from Lidardf")
     , "point")
@@ -149,6 +149,9 @@ las_dataframe.write
     true
   )
 
+  import tiling._;
+  val dim = 3
+  val nbt = new nd_tree(dim,10)
   val env = LidarRDD.boundaryEnvelope
   val geometryFactory = new GeometryFactory()
 
